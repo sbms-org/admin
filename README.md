@@ -1,6 +1,6 @@
 # SBMS Administrator Console
 
-React/Vite console for authorized ServiceBook Management System (SBMS) administrators. The console uses the API configured by `src/api/axiosInstance.js`; it does not supply local or mock queue, report, or settings data. All protected routes require an admin OTP login.
+React/Vite console for authorized ServiceBook Management System (SBMS) administrators. It provides the platform overview, provider verification, user access, work-post moderation, issues, reports, activity logs, and platform settings/fees. The console uses the API configured by `src/api/axiosInstance.js` and does not include legacy workflows or local mock data. All protected routes require an admin OTP login.
 
 ## Admin API contract
 
@@ -32,4 +32,4 @@ npm run lint
 npm run build
 ```
 
-Copy `.env.example` to `.env` and set `VITE_API_BASE_URL` for the deployment. OTP issuance and verification are served by `/auth/send-otp` and `/auth/verify-otp`; the console only stores a session when the verified account has the `admin` role.
+Copy `.env.example` to `.env` and set `VITE_API_BASE_URL` when the API is not available at the same origin under `/api/v1`. OTP issuance and verification are served by `/auth/send-otp` and `/auth/verify-otp`; the console only stores a session when the verified account has the `admin` role.

@@ -958,41 +958,6 @@ tbody tr:hover {
   border: 1px solid #bfdbfe;
 }
 
-/* Owner cell styling */
-.owner-cell {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.owner-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 700;
-  font-size: 14px;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-  transition: all 0.3s ease;
-}
-
-.owner-cell:hover .owner-avatar {
-  transform: scale(1.15) rotate(5deg);
-  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
-}
-
-.owner-name {
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0;
-  font-size: 14px;
-}
-
 /* Mobile Responsive Styles */
 @media (max-width: 1024px) {
   .layout__content {
@@ -1305,12 +1270,6 @@ tbody tr:hover {
   }
 
   .activity-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .owner-cell {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
