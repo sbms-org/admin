@@ -160,6 +160,22 @@
   text-shadow: 0 0 10px rgba(167, 139, 250, 0.5);
 }
 
+.demo-admin-account {
+  display: grid;
+  gap: .35rem;
+  width: 100%;
+  margin-top: .75rem;
+  padding: .8rem;
+  border: 1px solid #e6d49b;
+  border-radius: 8px;
+  background: #fff8df;
+  color: #574721;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.demo-admin-account small { font-weight: 400; }
+
 /* no particle or star effects; simplified design */
 
 @media (max-width: 768px) {

@@ -40,7 +40,7 @@ const configs = {
       ['description', 'Description'], ['status', 'Status'], ['createdAt', 'Submitted'],
     ],
     actions: [
-      { label: 'Approve', status: 'APPROVED', className: 'btn-success' },
+      { label: 'Approve', status: 'PUBLISHED', className: 'btn-success' },
       { label: 'Reject', status: 'REJECTED', className: 'btn-danger' },
     ],
     update: updateWorkPostModeration,
@@ -57,7 +57,7 @@ const configs = {
     actions: [
       { label: 'Investigate', status: 'IN_PROGRESS', className: 'btn-warning' },
       { label: 'Resolve', status: 'RESOLVED', className: 'btn-success' },
-      { label: 'Dismiss', status: 'DISMISSED', className: 'btn-secondary' },
+      { label: 'Dismiss', status: 'CLOSED', className: 'btn-secondary' },
     ],
     update: updateIssue,
     body: (status) => ({ status }),
@@ -65,7 +65,7 @@ const configs = {
 };
 
 const roleOptions = ['client', 'individual_provider', 'company_staff', 'broker', 'support_agent', 'admin'];
-const statusOptions = ['active', 'locked', 'suspended', 'disabled', 'pending'];
+const statusOptions = ['ACTIVE', 'PENDING', 'SUSPENDED', 'TERMINATED'];
 const fieldAliases = {
   name: ['name', 'fullName', 'fullname', 'providerName', 'title'],
   email: ['email', 'emailAddress'],
@@ -75,7 +75,7 @@ const fieldAliases = {
   createdAt: ['createdAt', 'created_at', 'submittedAt', 'requestedAt'],
   providerName: ['providerName', 'provider_name'],
   reporterName: ['reporterName', 'reportedBy', 'reporter', 'userName'],
-  title: ['title', 'subject', 'description'],
+  title: ['title', 'subject', 'caption', 'description'],
   type: ['type', 'issueType', 'incidentType'],
   priority: ['priority', 'severity'],
   description: ['description', 'details', 'content'],
@@ -90,6 +90,14 @@ function getRows(response) {
     if (collection) return collection;
   }
   throw new Error('The ServiceBook API returned an invalid list response.');
+}
+
+function getReportRows(response) {
+  const body = response?.data;
+  const value = body?.data ?? body?.items ?? body?.results ?? body;
+  if (Array.isArray(value)) return value;
+  if (value && typeof value === 'object') return [value];
+  throw new Error('The ServiceBook API returned an invalid report response.');
 }
 
 function displayValue(value) {
@@ -266,7 +274,7 @@ export function ReportsPage() {
   const [error, setError] = useState('');
   const load = useCallback(async () => {
     setLoading(true); setError('');
-    try { setReport(getRows(await getPlatformReports())); }
+    try { setReport(getReportRows(await getPlatformReports())); }
     catch (requestError) { setError(requestError.response?.data?.message || requestError.message || 'Unable to load platform reports.'); }
     finally { setLoading(false); }
   }, []);

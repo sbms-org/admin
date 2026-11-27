@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import './Navbar.css';
 
@@ -15,10 +15,17 @@ const pageTitles = {
 
 const Navbar = ({ onMenuClick }) => {
     const { pathname } = useLocation();
+    const [demoMode, setDemoMode] = useState(() => localStorage.getItem('sbmsDataSource') === 'demo');
     const title = pageTitles[pathname] || 'Admin Panel';
     const now = new Date().toLocaleDateString('en-US', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     });
+
+    useEffect(() => {
+        const handleDataSource = (event) => setDemoMode(Boolean(event.detail));
+        window.addEventListener('sbms-data-source', handleDataSource);
+        return () => window.removeEventListener('sbms-data-source', handleDataSource);
+    }, []);
 
     return (
         <header className="navbar">
@@ -34,6 +41,9 @@ const Navbar = ({ onMenuClick }) => {
                 </div>
             </div>
             <div className="navbar__right">
+                {demoMode && <div className="demo-data-notice" role="status">
+                    Demo data · changes are simulated and not saved to the live database
+                </div>}
                 <div className="navbar__badge">
                     <span className="navbar__badge-dot" aria-hidden="true"></span>
                     SBMS administrator console

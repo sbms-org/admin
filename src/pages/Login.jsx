@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
+import api from '../api/axiosInstance';
 import toast, { Toaster } from 'react-hot-toast';
 import './Login.css';
 
@@ -9,8 +10,21 @@ const Login = () => {
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState(1); // 1: mobile, 2: OTP
   const [isLoading, setIsLoading] = useState(false);
+  const [demoAdmin, setDemoAdmin] = useState(null);
   const navigate = useNavigate();
   const { sendOtp, verifyOtp, user } = useAuth();
+
+  useEffect(() => {
+    api.get('/auth/demo-users')
+      .then((response) => {
+        const payload = response.data?.data;
+        const admin = payload?.demoMode && Array.isArray(payload.users)
+          ? payload.users.find((account) => account.role === 'admin')
+          : null;
+        setDemoAdmin(admin || null);
+      })
+      .catch(() => setDemoAdmin(null));
+  }, []);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -126,6 +140,14 @@ const Login = () => {
           <p className="login-hint">
             Platform administration is restricted to authorized administrators. <strong>Sign in with your admin mobile number</strong>
           </p>
+          {demoAdmin && <button type="button" className="demo-admin-account" onClick={() => {
+            setMobile(demoAdmin.mobile);
+            setOtp('123456');
+            setStep(2);
+          }}>
+            Use demo administrator · {demoAdmin.mobile}
+            <small>Demo code: 123456</small>
+          </button>}
         </div>
       </div>
     </div>
