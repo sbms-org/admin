@@ -12,7 +12,8 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [demoAdmin, setDemoAdmin] = useState(null);
   const navigate = useNavigate();
-  const testToolsEnabled = import.meta.env.VITE_SBMS_TEST_MODE === 'true';
+  // Temporary development setting. Set VITE_SBMS_TEST_MODE=false before release.
+  const testToolsEnabled = import.meta.env.VITE_SBMS_TEST_MODE !== 'false';
   const { sendOtp, verifyOtp, user } = useAuth();
 
   useEffect(() => {
