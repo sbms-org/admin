@@ -12,6 +12,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [demoAdmin, setDemoAdmin] = useState(null);
   const navigate = useNavigate();
+  const testToolsEnabled = import.meta.env.VITE_SBMS_TEST_MODE === 'true';
   const { sendOtp, verifyOtp, user } = useAuth();
 
   useEffect(() => {
@@ -23,7 +24,14 @@ const Login = () => {
           : null;
         setDemoAdmin(admin || null);
       })
-      .catch(() => setDemoAdmin(null));
+      .catch(async () => {
+        try {
+          const dump = await fetch('/data/sbms_dump.json').then((response) => response.json());
+          setDemoAdmin(dump.users?.find((account) => account.role === 'admin') || null);
+        } catch {
+          setDemoAdmin(null);
+        }
+      });
   }, []);
 
   // Redirect if already logged in
@@ -77,6 +85,42 @@ const Login = () => {
       } else {
         toast.error(result.message || 'Invalid OTP');
       }
+    }
+  };
+
+  const skipLoginForTesting = async () => {
+    let account = demoAdmin;
+    if (!account) {
+      try {
+        const response = await fetch('/data/sbms_dump.json');
+        if (!response.ok) throw new Error('The local JSON dump is unavailable.');
+        const dump = await response.json();
+        account = dump.users?.find((candidate) => candidate.role === 'admin');
+      } catch (error) {
+        toast.error(error.message || 'No test administrator is available.');
+        return;
+      }
+    }
+    if (!account?.mobile) {
+      toast.error('No test administrator is available.');
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const sent = await sendOtp(account.mobile);
+      if (!sent.success) {
+        toast.error(sent.message || 'Test sign-in is unavailable.');
+        return;
+      }
+      const verified = await verifyOtp(account.mobile, '123456');
+      if (!verified.success) {
+        toast.error(verified.message || 'Test sign-in failed.');
+        return;
+      }
+      toast.success('Signed in with the test administrator.');
+      navigate('/dashboard', { replace: true });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -136,6 +180,9 @@ const Login = () => {
           </button>
         </form>
 
+        {testToolsEnabled && <button type="button" className="demo-admin-account" onClick={skipLoginForTesting} disabled={isLoading}>
+          Skip login for testing
+        </button>}
         <div className="login-footer">
           <p className="login-hint">
             Platform administration is restricted to authorized administrators. <strong>Sign in with your admin mobile number</strong>

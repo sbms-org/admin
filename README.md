@@ -42,3 +42,10 @@ npm run build
 ```
 
 Copy `.env.example` to `.env` and set `VITE_API_BASE_URL` when the API is not available at the same origin under `/api/v1`. OTP issuance and verification are served by `/auth/send-otp` and `/auth/verify-otp`; the console only stores a session when the verified account has the `admin` role.
+
+The admin seed copy is `public/data/sbms_dump.json`. Set
+`VITE_SBMS_TEST_MODE=true` to show the test sign-in control; it authenticates
+the seeded administrator through the API and does not bypass the protected
+routes. It is hidden unless explicitly enabled. The API's `SBMS_DEMO_MODE`
+setting controls whether reads and writes use the shared JSON demo store
+(`always`), the real database (`off`), or automatic selection (`auto`).
